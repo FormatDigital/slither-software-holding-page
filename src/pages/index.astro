@@ -1,5 +1,5 @@
 ---
-
+import Image from "astro/components/Image.astro";
 ---
 
 <html lang="en">
@@ -8,9 +8,129 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+		<title>Slither Software</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<div class="wrapper">
+			<div class="container">
+				<div class="content">
+				<h1 class="sr-only">Slither Software</h1>
+				<Image src="/logo.svg" alt="Slither Software" width={277} height={48} />
+				<p class="description">
+					<a href="#" id="show-email-link">Show Email</a>
+					<span id="email-display" style="display: none;">
+						<a href="#" id="email-link">Loading...</a>
+					</span>
+				</p>
+			</div>
+		</div>
 	</body>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const showEmailLink = document.getElementById('show-email-link');
+			
+			if (showEmailLink) {
+				showEmailLink.addEventListener('click', async function(event: Event) {
+					event.preventDefault();
+					
+					const showLink = document.getElementById('show-email-link');
+					const emailDisplay = document.getElementById('email-display');
+					const emailLink = document.getElementById('email-link');
+					
+					if (!showLink || !emailDisplay || !emailLink) {
+						console.error('Required elements not found');
+						return;
+					}
+					
+					try {
+						const response = await fetch('/api/email');
+						const data = await response.json();
+						
+						(emailLink as HTMLAnchorElement).href = `mailto:${data.email}`;
+						emailLink.textContent = data.email;
+						
+						showLink.style.display = 'none';
+						emailDisplay.style.display = 'inline';
+					} catch (error) {
+						console.error('Failed to fetch email:', error);
+						emailLink.textContent = 'Error loading email';
+						showLink.style.display = 'none';
+						emailDisplay.style.display = 'inline';
+					}
+				});
+			}
+		});
+	</script>
 </html>
+
+
+<style>
+	html body {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		height: 100%;
+		width: 100%;
+		font-size: 16px;
+		line-height: 1.5;
+		color: #fff;
+		background-color: #111;
+		font-family: "Zalando Sans", sans-serif;
+		font-optical-sizing: auto;
+		font-weight: <weight>;
+		font-style: normal;
+		font-variation-settings:
+			"wdth" 100;
+	}
+	.wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		min-height: 100vh;
+	}
+
+	.container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 2rem;
+	}
+
+	a {
+		color: #fff;
+		text-decoration: none;
+		font-weight: 400;
+		font-size: 1rem;
+		transition: color 0.3s ease, background-color 0.3s ease;
+		border: 1px solid rgb(255, 255, 255, 0.2);
+		padding: 0.5rem 1rem;
+		border-radius: 0.25rem;
+	}
+	a:hover {
+		color: #000;
+		background-color: #fff;
+	}
+</style>
